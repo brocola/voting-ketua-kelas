@@ -5,89 +5,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pemilihan Ketua Kelas</title>
 <style>
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background: linear-gradient(180deg,#9fd8ff,#eaf6ff);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px;
-}
-.card{
-  background:#fff;
-  width:100%;
-  max-width:360px;
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
-  text-align:center;
-  margin:10px 0;
-}
-input,button{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border-radius:12px;
-  border:none;
-  font-size:16px;
-}
-input{background:#f1f5f9;}
-button{
-  background:linear-gradient(135deg,#2563eb,#0ea5e9);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-.candidate{
-  border:2px solid #1e88e5;
-  border-radius:15px;
-  padding:15px;
-  margin-top:15px;
-  text-align:left;
-}
-.hide{display:none;}
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(180deg, #9fd8ff, #eaf6ff);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  /* Kontainer Utama agar UI tidak terpisah-pisah */
+  .main-container {
+    background: #fff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  h2 { color: #1e293b; margin-bottom: 20px; }
+  input, button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+  input { background: #f1f5f9; border: 1px solid #e2e8f0; }
+  button {
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:active { transform: scale(0.98); }
+  
+  .candidate {
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: left;
+    transition: 0.3s;
+  }
+  .candidate:hover { border-color: #3b82f6; background: #f8fafc; }
+  .candidate h3 { margin: 0; color: #2563eb; }
+  .candidate p { margin: 5px 0; font-size: 14px; color: #64748b; }
+
+  .hide { display: none; }
+  
+  /* Tombol reset dibuat kecil di bawah agar tidak merusak UI utama */
+  .reset-link {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: underline;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
 
-<!-- SUDAH VOTING -->
-<div class="card hide" id="done">
-  <h2>✅ Kamu sudah voting</h2>
-  <p>Terima kasih</p>
-</div>
-
-<!-- MASUKKAN NAMA -->
-<div class="card hide" id="login">
-  <h2>Masukkan Nama</h2>
-  <input id="nama" placeholder="Nama kamu">
-  <button onclick="mulai()">Mulai</button>
-</div>
-
-<!-- VOTING -->
-<div class="card hide" id="vote">
-  <h2>Pilih Ketua Kelas</h2>
-
-  <div class="candidate">
-    <h3>Ananta</h3>
-    <p>Visi: Kelas kompak dan aktif</p>
-    <p>Misi: Disiplin & tanggung jawab</p>
-    <button onclick="kirim('Ananta')">Pilih</button>
+<div class="main-container">
+  <div id="login" class="hide">
+    <h2>👋 Halo!</h2>
+    <p>Silakan masukkan nama untuk mulai voting.</p>
+    <input id="nama" placeholder="Ketik nama lengkap...">
+    <button onclick="mulai()">Mulai Voting</button>
   </div>
 
-  <div class="candidate">
-    <h3>Ananta3</h3>
-    <p>Visi: Kelas nyaman & rapi</p>
-    <p>Misi: Kerja sama & saling menghargai</p>
-    <button onclick="kirim('Ananta3')">Pilih</button>
+  <div id="vote" class="hide">
+    <h2>Pilih Ketua Kelas</h2>
+    <div class="candidate">
+      <h3>Ananta</h3>
+      <p><b>Visi:</b> Kelas kompak dan aktif</p>
+      <button onclick="kirim('Ananta')">Pilih Ananta</button>
+    </div>
+    <div class="candidate">
+      <h3>Ananta 3</h3>
+      <p><b>Visi:</b> Kelas nyaman & rapi</p>
+      <button onclick="kirim('Ananta 3')">Pilih Ananta 3</button>
+    </div>
   </div>
-</div>
 
-<!-- Tombol Reset Voting -->
-<div class="card">
-  <button onclick="resetVote()">Reset Voting</button>
+  <div id="done" class="hide">
+    <div style="font-size: 50px;">✅</div>
+    <h2>Terima Kasih!</h2>
+    <p>Pilihan kamu sudah berhasil dikirim ke sistem.</p>
+  </div>
+
+  <p class="reset-link" onclick="resetVote()">Reset Data (Hanya untuk Testing)</p>
 </div>
 
 <script>
@@ -97,61 +110,67 @@ const done = document.getElementById("done");
 const login = document.getElementById("login");
 const vote = document.getElementById("vote");
 
-// cek localStorage
+// Cek status saat halaman dibuka
 if(localStorage.getItem("sudahVoting")){
   done.classList.remove("hide");
-}else{
+} else {
   login.classList.remove("hide");
 }
 
-// mulai voting setelah isi nama
 function mulai(){
   const n = document.getElementById("nama").value.trim();
-  if(!n){ alert("Isi nama dulu"); return; }
+  if(!n){ alert("Nama tidak boleh kosong!"); return; }
   localStorage.setItem("namaPemilih", n);
   login.classList.add("hide");
   vote.classList.remove("hide");
 }
 
-// kirim pilihan ke spreadsheet
 function kirim(pilihan){
   if(localStorage.getItem("sudahVoting")){
-    alert("Kamu sudah voting");
+    alert("Kamu sudah pernah mengirim pilihan!");
     return;
   }
+  
   const nama = localStorage.getItem("namaPemilih");
+  const btn = event.target;
+  btn.innerText = "Mengirim...";
+  btn.disabled = true;
 
   const data = new URLSearchParams();
   data.append("nama", nama);
   data.append("pilihan", pilihan);
 
-  fetch(URL,{
-    method:"POST",
-    body:data
-  }).then(res => res.text())
+  fetch(URL, {
+    method: "POST",
+    body: data
+  })
+  .then(res => res.text())
   .then(txt => {
-    if(txt==="SUDAH"){
-      alert("Nama ini sudah pernah voting");
-      vote.classList.add("hide");
-      login.classList.remove("hide");
-    }else if(txt==="OK"){
-      localStorage.setItem("sudahVoting","1");
+    if(txt === "SUDAH"){
+      alert("Maaf, nama ini sudah tercatat melakukan voting.");
+      location.reload();
+    } else if(txt === "OK"){
+      localStorage.setItem("sudahVoting", "1");
       vote.classList.add("hide");
       done.classList.remove("hide");
-    }else{
-      alert("Gagal kirim data");
+    } else {
+      alert("Terjadi kesalahan sistem.");
+      btn.innerText = "Pilih";
+      btn.disabled = false;
     }
-  }).catch(()=>{
-    alert("Gagal kirim data");
+  })
+  .catch(() => {
+    alert("Gagal terhubung ke server. Cek koneksi internet.");
+    btn.innerText = "Pilih";
+    btn.disabled = false;
   });
 }
 
-// tombol reset vote
 function resetVote(){
-  localStorage.removeItem("sudahVoting");
-  localStorage.removeItem("namaPemilih");
-  alert("Sekarang kamu bisa vote lagi!");
-  location.reload();
+  if(confirm("Hapus data voting di HP ini?")){
+    localStorage.clear();
+    location.reload();
+  }
 }
 </script>
 
