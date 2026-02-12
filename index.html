@@ -12,162 +12,152 @@
     background: linear-gradient(180deg, #9fd8ff, #eaf6ff);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 15px;
   }
-  /* Kontainer Utama agar UI tidak terpisah-pisah */
-  .main-container {
+  /* KONTENER UTAMA - Ini yang bikin rapi */
+  .main-card {
     background: #fff;
     width: 100%;
-    max-width: 400px;
-    border-radius: 25px;
-    padding: 30px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    max-width: 380px;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     text-align: center;
   }
-  h2 { color: #1e293b; margin-bottom: 20px; }
+  h2 { color: #1e293b; margin-top: 0; }
   input, button {
     width: 100%;
-    padding: 15px;
-    margin-top: 15px;
+    padding: 14px;
+    margin-top: 12px;
     border-radius: 12px;
     border: none;
     font-size: 16px;
-    transition: 0.3s;
   }
-  input { background: #f1f5f9; border: 1px solid #e2e8f0; }
+  input { background: #f1f5f9; border: 1px solid #cbd5e1; }
   button {
     background: linear-gradient(135deg, #2563eb, #0ea5e9);
     color: #fff;
     font-weight: bold;
     cursor: pointer;
   }
-  button:active { transform: scale(0.98); }
-  
   .candidate {
     border: 2px solid #e2e8f0;
     border-radius: 15px;
     padding: 15px;
     margin-top: 15px;
     text-align: left;
-    transition: 0.3s;
   }
-  .candidate:hover { border-color: #3b82f6; background: #f8fafc; }
-  .candidate h3 { margin: 0; color: #2563eb; }
-  .candidate p { margin: 5px 0; font-size: 14px; color: #64748b; }
-
-  .hide { display: none; }
+  .candidate h3 { margin: 0; color: #1e40af; }
+  .candidate p { margin: 4px 0; font-size: 13px; color: #475569; }
   
-  /* Tombol reset dibuat kecil di bawah agar tidak merusak UI utama */
-  .reset-link {
-    margin-top: 25px;
-    font-size: 12px;
+  .hide { display: none; } /* Ini untuk menyembunyikan bagian yang belum perlu */
+
+  .reset-btn {
+    margin-top: 20px;
+    background: none;
     color: #94a3b8;
+    font-size: 12px;
     text-decoration: underline;
-    cursor: pointer;
+    padding: 5px;
   }
 </style>
 </head>
 <body>
 
-<div class="main-container">
-  <div id="login" class="hide">
-    <h2>👋 Halo!</h2>
-    <p>Silakan masukkan nama untuk mulai voting.</p>
-    <input id="nama" placeholder="Ketik nama lengkap...">
-    <button onclick="mulai()">Mulai Voting</button>
+<div class="main-card">
+  <div id="login-section">
+    <h2>Masukkan Nama</h2>
+    <p style="font-size: 14px; color: #64748b;">Silakan isi nama untuk mulai memilih.</p>
+    <input id="nama-user" placeholder="Nama kamu...">
+    <button onclick="mulaiVoting()">Mulai</button>
   </div>
 
-  <div id="vote" class="hide">
+  <div id="vote-section" class="hide">
     <h2>Pilih Ketua Kelas</h2>
+    
     <div class="candidate">
       <h3>Ananta</h3>
       <p><b>Visi:</b> Kelas kompak dan aktif</p>
-      <button onclick="kirim('Ananta')">Pilih Ananta</button>
+      <p><b>Misi:</b> Disiplin & tanggung jawab</p>
+      <button onclick="kirimPilihan('Ananta')">Pilih Ananta</button>
     </div>
+
     <div class="candidate">
       <h3>Ananta 3</h3>
       <p><b>Visi:</b> Kelas nyaman & rapi</p>
-      <button onclick="kirim('Ananta 3')">Pilih Ananta 3</button>
+      <p><b>Misi:</b> Kerja sama & menghargai</p>
+      <button onclick="kirimPilihan('Ananta 3')">Pilih Ananta 3</button>
     </div>
   </div>
 
-  <div id="done" class="hide">
+  <div id="done-section" class="hide">
     <div style="font-size: 50px;">✅</div>
     <h2>Terima Kasih!</h2>
-    <p>Pilihan kamu sudah berhasil dikirim ke sistem.</p>
+    <p>Pilihan kamu sudah terkirim.</p>
   </div>
 
-  <p class="reset-link" onclick="resetVote()">Reset Data (Hanya untuk Testing)</p>
+  <button class="reset-btn" onclick="resetSistem()">Reset Data Voting</button>
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbxzvzcgGrrCIFQKL8m7vmgcNe0gtbZr0WiXx0MHO4FD1ZSAoiDNUAUYlBC9WX5gCGMJ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzvzcgGrrCIFQKL8m7vmgcNe0gtbZr0WiXx0MHO4FD1ZSAoiDNUAUYlBC9WX5gCGMJ/exec";
 
-const done = document.getElementById("done");
-const login = document.getElementById("login");
-const vote = document.getElementById("vote");
+const sectionLogin = document.getElementById("login-section");
+const sectionVote = document.getElementById("vote-section");
+const sectionDone = document.getElementById("done-section");
 
-// Cek status saat halaman dibuka
-if(localStorage.getItem("sudahVoting")){
-  done.classList.remove("hide");
-} else {
-  login.classList.remove("hide");
+// Cek apakah sudah pernah vote
+if(localStorage.getItem("voted")){
+  sectionLogin.classList.add("hide");
+  sectionDone.classList.remove("hide");
 }
 
-function mulai(){
-  const n = document.getElementById("nama").value.trim();
-  if(!n){ alert("Nama tidak boleh kosong!"); return; }
-  localStorage.setItem("namaPemilih", n);
-  login.classList.add("hide");
-  vote.classList.remove("hide");
+function mulaiVoting(){
+  const nama = document.getElementById("nama-user").value.trim();
+  if(!nama){ alert("Tolong isi nama dulu ya!"); return; }
+  localStorage.setItem("user_name", nama);
+  sectionLogin.classList.add("hide");
+  sectionVote.classList.remove("hide");
 }
 
-function kirim(pilihan){
-  if(localStorage.getItem("sudahVoting")){
-    alert("Kamu sudah pernah mengirim pilihan!");
-    return;
-  }
-  
-  const nama = localStorage.getItem("namaPemilih");
+function kirimPilihan(pilihan){
+  const nama = localStorage.getItem("user_name");
   const btn = event.target;
+  
   btn.innerText = "Mengirim...";
   btn.disabled = true;
 
-  const data = new URLSearchParams();
-  data.append("nama", nama);
-  data.append("pilihan", pilihan);
+  const formData = new URLSearchParams();
+  formData.append("nama", nama);
+  formData.append("pilihan", pilihan);
 
-  fetch(URL, {
+  fetch(SCRIPT_URL, {
     method: "POST",
-    body: data
+    body: formData
   })
   .then(res => res.text())
-  .then(txt => {
-    if(txt === "SUDAH"){
-      alert("Maaf, nama ini sudah tercatat melakukan voting.");
-      location.reload();
-    } else if(txt === "OK"){
-      localStorage.setItem("sudahVoting", "1");
-      vote.classList.add("hide");
-      done.classList.remove("hide");
+  .then(res => {
+    if(res === "OK"){
+      localStorage.setItem("voted", "true");
+      sectionVote.classList.add("hide");
+      sectionDone.classList.remove("hide");
     } else {
-      alert("Terjadi kesalahan sistem.");
+      alert("Error: " + res);
       btn.innerText = "Pilih";
       btn.disabled = false;
     }
   })
   .catch(() => {
-    alert("Gagal terhubung ke server. Cek koneksi internet.");
+    alert("Gagal kirim. Cek koneksi internet.");
     btn.innerText = "Pilih";
     btn.disabled = false;
   });
 }
 
-function resetVote(){
-  if(confirm("Hapus data voting di HP ini?")){
+function resetSistem(){
+  if(confirm("Hapus status voting kamu?")){
     localStorage.clear();
     location.reload();
   }
