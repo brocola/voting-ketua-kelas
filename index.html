@@ -1,168 +1,188 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pemilihan Ketua Kelas</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(180deg, #9fd8ff, #eaf6ff);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-  }
-  /* KONTENER UTAMA - Ini yang bikin rapi */
-  .main-card {
-    background: #fff;
-    width: 100%;
-    max-width: 380px;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: center;
-  }
-  h2 { color: #1e293b; margin-top: 0; }
-  input, button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 12px;
-    border-radius: 12px;
-    border: none;
-    font-size: 16px;
-  }
-  input { background: #f1f5f9; border: 1px solid #cbd5e1; }
-  button {
-    background: linear-gradient(135deg, #2563eb, #0ea5e9);
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .candidate {
-    border: 2px solid #e2e8f0;
-    border-radius: 15px;
-    padding: 15px;
-    margin-top: 15px;
-    text-align: left;
-  }
-  .candidate h3 { margin: 0; color: #1e40af; }
-  .candidate p { margin: 4px 0; font-size: 13px; color: #475569; }
-  
-  .hide { display: none; } /* Ini untuk menyembunyikan bagian yang belum perlu */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Ketua Kelas</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #9fd8ff, #eaf6ff);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-  .reset-btn {
-    margin-top: 20px;
-    background: none;
-    color: #94a3b8;
-    font-size: 12px;
-    text-decoration: underline;
-    padding: 5px;
-  }
-</style>
+        /* Container tunggal supaya UI tidak berjejer berantakan */
+        .main-card {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 { color: #1e293b; margin-top: 0; margin-bottom: 20px; }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .candidate-box {
+            border: 2px solid #f1f5f9;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        .candidate-box:hover { border-color: #3b82f6; }
+        .candidate-box h3 { margin: 0; color: #2563eb; }
+        .candidate-box p { margin: 5px 0; font-size: 14px; color: #64748b; line-height: 1.4; }
+
+        /* Class sakti untuk menyembunyikan bagian yang tidak perlu */
+        .hide { display: none !important; }
+
+        .footer-link {
+            display: block;
+            margin-top: 25px;
+            font-size: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
-<div class="main-card">
-  <div id="login-section">
-    <h2>Masukkan Nama</h2>
-    <p style="font-size: 14px; color: #64748b;">Silakan isi nama untuk mulai memilih.</p>
-    <input id="nama-user" placeholder="Nama kamu...">
-    <button onclick="mulaiVoting()">Mulai</button>
-  </div>
+    <div class="main-card">
+        <div id="section-login">
+            <h2>👋 Halo!</h2>
+            <p style="color: #64748b; margin-bottom: 20px;">Masukkan nama kamu untuk mulai memberikan suara.</p>
+            <input type="text" id="input-nama" placeholder="Ketik nama lengkap...">
+            <button onclick="prosesLogin()">Mulai Voting</button>
+        </div>
 
-  <div id="vote-section" class="hide">
-    <h2>Pilih Ketua Kelas</h2>
-    
-    <div class="candidate">
-      <h3>Ananta</h3>
-      <p><b>Visi:</b> Kelas kompak dan aktif</p>
-      <p><b>Misi:</b> Disiplin & tanggung jawab</p>
-      <button onclick="kirimPilihan('Ananta')">Pilih Ananta</button>
+        <div id="section-vote" class="hide">
+            <h2>Pilih Ketua</h2>
+            
+            <div class="candidate-box">
+                <h3>Ananta</h3>
+                <p><b>Visi:</b> Kelas kompak dan aktif</p>
+                <p><b>Misi:</b> Disiplin & tanggung jawab</p>
+                <button onclick="kirimVote('Ananta')">Pilih Ananta</button>
+            </div>
+
+            <div class="candidate-box">
+                <h3>Ananta 3</h3>
+                <p><b>Visi:</b> Kelas nyaman & rapi</p>
+                <p><b>Misi:</b> Kerja sama & menghargai</p>
+                <button onclick="kirimVote('Ananta 3')">Pilih Ananta 3</button>
+            </div>
+        </div>
+
+        <div id="section-done" class="hide">
+            <div style="font-size: 60px; margin-bottom: 10px;">✅</div>
+            <h2>Terima Kasih!</h2>
+            <p style="color: #64748b;">Suara kamu sudah berhasil direkam ke sistem.</p>
+        </div>
+
+        <span class="footer-link" onclick="hapusCache()">Reset status voting</span>
     </div>
 
-    <div class="candidate">
-      <h3>Ananta 3</h3>
-      <p><b>Visi:</b> Kelas nyaman & rapi</p>
-      <p><b>Misi:</b> Kerja sama & menghargai</p>
-      <button onclick="kirimPilihan('Ananta 3')">Pilih Ananta 3</button>
-    </div>
-  </div>
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxzvzcgGrrCIFQKL8m7vmgcNe0gtbZr0WiXx0MHO4FD1ZSAoiDNUAUYlBC9WX5gCGMJ/exec";
+        
+        const divLogin = document.getElementById('section-login');
+        const divVote = document.getElementById('section-vote');
+        const divDone = document.getElementById('section-done');
 
-  <div id="done-section" class="hide">
-    <div style="font-size: 50px;">✅</div>
-    <h2>Terima Kasih!</h2>
-    <p>Pilihan kamu sudah terkirim.</p>
-  </div>
+        // Cek apakah user sudah pernah voting di HP ini
+        if (localStorage.getItem("statusVoting") === "selesai") {
+            divLogin.classList.add('hide');
+            divDone.classList.remove('hide');
+        }
 
-  <button class="reset-btn" onclick="resetSistem()">Reset Data Voting</button>
-</div>
+        function prosesLogin() {
+            const nama = document.getElementById('input-nama').value.trim();
+            if (nama === "") {
+                alert("Namanya diisi dulu ya!");
+                return;
+            }
+            localStorage.setItem("namaUser", nama);
+            divLogin.classList.add('hide');
+            divVote.classList.remove('hide');
+        }
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzvzcgGrrCIFQKL8m7vmgcNe0gtbZr0WiXx0MHO4FD1ZSAoiDNUAUYlBC9WX5gCGMJ/exec";
+        function kirimVote(pilihan) {
+            const nama = localStorage.getItem("namaUser");
+            const btn = event.target;
+            
+            btn.innerText = "Mengirim...";
+            btn.disabled = true;
 
-const sectionLogin = document.getElementById("login-section");
-const sectionVote = document.getElementById("vote-section");
-const sectionDone = document.getElementById("done-section");
+            const data = new URLSearchParams();
+            data.append("nama", nama);
+            data.append("pilihan", pilihan);
 
-// Cek apakah sudah pernah vote
-if(localStorage.getItem("voted")){
-  sectionLogin.classList.add("hide");
-  sectionDone.classList.remove("hide");
-}
+            fetch(API_URL, {
+                method: "POST",
+                body: data
+            })
+            .then(res => res.text())
+            .then(hasil => {
+                if (hasil === "OK") {
+                    localStorage.setItem("statusVoting", "selesai");
+                    divVote.classList.add('hide');
+                    divDone.classList.remove('hide');
+                } else {
+                    alert("Gagal: " + hasil);
+                    btn.innerText = "Pilih";
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                alert("Koneksi bermasalah!");
+                btn.innerText = "Pilih";
+                btn.disabled = false;
+            });
+        }
 
-function mulaiVoting(){
-  const nama = document.getElementById("nama-user").value.trim();
-  if(!nama){ alert("Tolong isi nama dulu ya!"); return; }
-  localStorage.setItem("user_name", nama);
-  sectionLogin.classList.add("hide");
-  sectionVote.classList.remove("hide");
-}
-
-function kirimPilihan(pilihan){
-  const nama = localStorage.getItem("user_name");
-  const btn = event.target;
-  
-  btn.innerText = "Mengirim...";
-  btn.disabled = true;
-
-  const formData = new URLSearchParams();
-  formData.append("nama", nama);
-  formData.append("pilihan", pilihan);
-
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(res => {
-    if(res === "OK"){
-      localStorage.setItem("voted", "true");
-      sectionVote.classList.add("hide");
-      sectionDone.classList.remove("hide");
-    } else {
-      alert("Error: " + res);
-      btn.innerText = "Pilih";
-      btn.disabled = false;
-    }
-  })
-  .catch(() => {
-    alert("Gagal kirim. Cek koneksi internet.");
-    btn.innerText = "Pilih";
-    btn.disabled = false;
-  });
-}
-
-function resetSistem(){
-  if(confirm("Hapus status voting kamu?")){
-    localStorage.clear();
-    location.reload();
-  }
-}
-</script>
+        function hapusCache() {
+            if (confirm("Ingin mengulang voting?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
 
 </body>
 </html>
