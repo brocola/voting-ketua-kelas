@@ -3,186 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting Ketua Kelas</title>
+    <title>E-Voting Modern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #9fd8ff, #eaf6ff);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        :root {
+            --primary: #4A90E2;
+            --danger: #FF4757;
+            --success: #2ED573;
+            --bg: #F0F4F8;
+            --card-bg: #FFFFFF;
         }
 
-        /* Container tunggal supaya UI tidak berjejer berantakan */
-        .main-card {
-            background: white;
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { margin: 0; background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .card {
+            background: var(--card-bg);
             width: 100%;
-            max-width: 380px;
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
             text-align: center;
+            transition: all 0.4s ease;
         }
 
-        h2 { color: #1e293b; margin-top: 0; margin-bottom: 20px; }
-        
+        .icon-box {
+            width: 80px; height: 80px;
+            background: #ffffff;
+            border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: inset 6px 6px 12px #eeeeee, inset -6px -6px 12px #ffffff, 10px 10px 20px rgba(0,0,0,0.05);
+            font-size: 35px;
+        }
+
+        h2 { color: #2D3436; font-weight: 700; margin-bottom: 10px; font-size: 24px; }
+        p { color: #636E72; font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
+
+        .input-wrapper { margin-bottom: 15px; text-align: left; }
         input {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 16px 20px;
+            border: 2px solid transparent;
+            background: #F1F3F6;
+            border-radius: 15px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            color: #2D3436;
+        }
+        input:focus { border-color: var(--primary); background: #fff; }
+
+        /* Label Error */
+        #error-msg {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+            padding: 10px;
             border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
-            font-size: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         button {
             width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            background: linear-gradient(135deg, #2563eb, #0ea5e9);
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        button:active { transform: scale(0.98); }
-
-        .candidate-box {
-            border: 2px solid #f1f5f9;
+            padding: 16px;
             border-radius: 15px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: left;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3);
             transition: 0.3s;
         }
+        button:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(74, 144, 226, 0.4); }
+        button:active { transform: translateY(0); }
 
-        .candidate-box:hover { border-color: #3b82f6; }
-        .candidate-box h3 { margin: 0; color: #2563eb; }
-        .candidate-box p { margin: 5px 0; font-size: 14px; color: #64748b; line-height: 1.4; }
+        .btn-vote {
+            background: #fff;
+            color: var(--primary);
+            border: 2px solid #F1F3F6;
+            margin-bottom: 12px;
+            box-shadow: none;
+        }
+        .btn-vote:hover { border-color: var(--primary); background: var(--primary); color: #fff; }
 
-        /* Class sakti untuk menyembunyikan bagian yang tidak perlu */
         .hide { display: none !important; }
 
-        .footer-link {
-            display: block;
-            margin-top: 25px;
-            font-size: 12px;
-            color: #94a3b8;
-            cursor: pointer;
-            text-decoration: underline;
-        }
+        /* Modal Area */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99; }
+        .modal { background: #fff; padding: 30px; border-radius: 25px; width: 85%; max-width: 320px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <div id="section-login">
-            <h2>👋 Halo!</h2>
-            <p style="color: #64748b; margin-bottom: 20px;">Masukkan nama kamu untuk mulai memberikan suara.</p>
-            <input type="text" id="input-nama" placeholder="Ketik nama lengkap...">
-            <button onclick="prosesLogin()">Mulai Voting</button>
-        </div>
-
-        <div id="section-vote" class="hide">
-            <h2>Pilih Ketua</h2>
+    <div class="card" id="app-card">
+        <div id="sec-login">
+            <div class="icon-box">🚀</div>
+            <h2>E-Voting</h2>
+            <p>Masukkan nama lengkapmu sesuai daftar absen untuk mulai.</p>
             
-            <div class="candidate-box">
-                <h3>Ananta</h3>
-                <p><b>Visi:</b> Kelas kompak dan aktif</p>
-                <p><b>Misi:</b> Disiplin & tanggung jawab</p>
-                <button onclick="kirimVote('Ananta')">Pilih Ananta</button>
+            <div id="error-msg">❌ Nama tidak terdaftar!</div>
+            
+            <div class="input-wrapper">
+                <input type="text" id="nama" placeholder="Contoh: Ananta Wijaya">
             </div>
-
-            <div class="candidate-box">
-                <h3>Ananta 3</h3>
-                <p><b>Visi:</b> Kelas nyaman & rapi</p>
-                <p><b>Misi:</b> Kerja sama & menghargai</p>
-                <button onclick="kirimVote('Ananta 3')">Pilih Ananta 3</button>
-            </div>
+            <button onclick="cekNama()">Masuk & Pilih</button>
         </div>
 
-        <div id="section-done" class="hide">
-            <div style="font-size: 60px; margin-bottom: 10px;">✅</div>
+        <div id="sec-vote" class="hide">
+            <div class="icon-box">🗳️</div>
+            <h2>Pilih Kandidat</h2>
+            <p>Klik salah satu nama di bawah ini.</p>
+            <button class="btn-vote" onclick="konfirmasi('Ananta')">Ananta</button>
+            <button class="btn-vote" onclick="konfirmasi('Ananta 3')">Ananta 3</button>
+        </div>
+
+        <div id="sec-done" class="hide">
+            <div class="icon-box">✅</div>
             <h2>Terima Kasih!</h2>
-            <p style="color: #64748b;">Suara kamu sudah berhasil direkam ke sistem.</p>
+            <p>Suaramu sudah berhasil masuk ke <b>database</b>.</p>
+            <button onclick="location.reload()" style="background:#636E72">Selesai</button>
         </div>
+    </div>
 
-        <span class="footer-link" onclick="hapusCache()">Reset status voting</span>
+    <div id="overlay" class="overlay">
+        <div class="modal">
+            <h3 id="m-title">Konfirmasi</h3>
+            <p id="m-msg" style="font-size:14px; color:#636E72"></p>
+            <div id="m-action"></div>
+            <button onclick="tutupModal()" style="background:none; color:#636E72; box-shadow:none; margin-top:10px">Tutup</button>
+        </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxzvzcgGrrCIFQKL8m7vmgcNe0gtbZr0WiXx0MHO4FD1ZSAoiDNUAUYlBC9WX5gCGMJ/exec";
-        
-        const divLogin = document.getElementById('section-login');
-        const divVote = document.getElementById('section-vote');
-        const divDone = document.getElementById('section-done');
+        const API_URL = "https://script.google.com/macros/s/AKfycbzu37dOZvO2XFwR1CIGCMRw9JbvRe9Eq6tyCwA-ymK3srT4BVDaqkNteC5j4lklmGbR4w/exec";
 
-        // Cek apakah user sudah pernah voting di HP ini
-        if (localStorage.getItem("statusVoting") === "selesai") {
-            divLogin.classList.add('hide');
-            divDone.classList.remove('hide');
-        }
-
-        function prosesLogin() {
-            const nama = document.getElementById('input-nama').value.trim();
-            if (nama === "") {
-                alert("Namanya diisi dulu ya!");
+        // Fungsi Cek Nama (Login)
+        function cekNama() {
+            const namaInput = document.getElementById('nama').value.trim();
+            const errorLabel = document.getElementById('error-msg');
+            
+            if(!namaInput) {
+                alert("Masukkan nama dulu ya!");
                 return;
             }
-            localStorage.setItem("namaUser", nama);
-            divLogin.classList.add('hide');
-            divVote.classList.remove('hide');
-        }
 
-        function kirimVote(pilihan) {
-            const nama = localStorage.getItem("namaUser");
-            const btn = event.target;
-            
-            btn.innerText = "Mengirim...";
+            errorLabel.style.display = "none";
+            const btn = document.querySelector('#sec-login button');
+            btn.innerText = "Mengecek...";
             btn.disabled = true;
 
-            const data = new URLSearchParams();
-            data.append("nama", nama);
-            data.append("pilihan", pilihan);
-
-            fetch(API_URL, {
-                method: "POST",
-                body: data
-            })
-            .then(res => res.text())
-            .then(hasil => {
-                if (hasil === "OK") {
-                    localStorage.setItem("statusVoting", "selesai");
-                    divVote.classList.add('hide');
-                    divDone.classList.remove('hide');
+            // Cek ke server apakah nama ada di Whitelist
+            fetch(API_URL + "?action=checkName&nama=" + encodeURIComponent(namaInput))
+            .then(r => r.text())
+            .then(res => {
+                if(res === "VALID") {
+                    localStorage.setItem("user_voter", namaInput);
+                    showSection("vote");
                 } else {
-                    alert("Gagal: " + hasil);
-                    btn.innerText = "Pilih";
+                    errorLabel.style.display = "flex";
+                    btn.innerText = "Masuk & Pilih";
                     btn.disabled = false;
                 }
-            })
-            .catch(err => {
-                alert("Koneksi bermasalah!");
-                btn.innerText = "Pilih";
-                btn.disabled = false;
             });
         }
 
-        function hapusCache() {
-            if (confirm("Ingin mengulang voting?")) {
-                localStorage.clear();
-                location.reload();
-            }
+        function konfirmasi(kandidat) {
+            document.getElementById('overlay').style.display = 'flex';
+            document.getElementById('m-title').innerText = "Yakin?";
+            document.getElementById('m-msg').innerText = "Kamu akan memilih " + kandidat + ". Pilihan tidak bisa diubah.";
+            document.getElementById('m-action').innerHTML = `<button onclick="kirimVote('${kandidat}')">Ya, Kirim Suara</button>`;
         }
-    </script>
 
+        function kirimVote(pilihan) {
+            document.getElementById('m-msg').innerText = "Sedang mengirim ke database...";
+            document.getElementById('m-action').innerHTML = "";
+
+            fetch(API_URL, {
+                method: "POST",
+                body: new URLSearchParams({ 
+                    nama: localStorage.getItem("user_voter"), 
+                    pilihan: pilihan 
+                })
+            }).then(r => r.text()).then(res => {
+                if(res === "OK") {
+                    localStorage.setItem("voted", "true");
+                    tutupModal();
+                    showSection("done");
+                }
+            });
+        }
+
+        function showSection(id) {
+            document.getElementById('sec-login').classList.add('hide');
+            document.getElementById('sec-vote').classList.add('hide');
+            document.getElementById('sec-done').classList.add('hide');
+            document.getElementById('sec-' + id).classList.remove('hide');
+        }
+
+        function tutupModal() { document.getElementById('overlay').style.display = 'none'; }
+    </script>
 </body>
 </html>
